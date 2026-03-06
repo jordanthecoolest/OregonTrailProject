@@ -20,7 +20,7 @@ struct gameState {
   int axles;
   int tongues;
   //progress
-  int milesTraveled
+  int milesTraveled;
   int day;
   int month;
 };
@@ -33,27 +33,41 @@ struct gameState {
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 int main() {
+  struct gameState game;
   int mainMenu=0;
   int jobSelect=0;
   printf(GREEN"~~~~~~~~~~The Oregon Trail~~~~~~~~~~\n"RESET);
   printf("1. Travel the trail\n");
   printf("2. Learn about the trail\n");
-  while ((mainMenu != 1) || (mainMenu != 2)) {
+  while ((mainMenu != 1) && (mainMenu != 2)) {
     printf("What is your choice? ");
     scanf("%d", &mainMenu);
   }
+  jobSelect:
   if (mainMenu == 1) {
-    printf("\nMany kinds of people made the trip to Oregon.\n");
-    printf("You may:\n");
-    printf("1. Be a banker from Boston\n");
-    printf("2. Be a carpenter from Ohio\n");
-    printf("3. Be a farmer from Illinois\n");
-    printf("4. Find out the differences between these choices\n");
-    while ((jobSelect != 1) && (mainMenu != 2) && (mainMenu != 3) && (mainMenu != 4))
+    while ((jobSelect < 1) || (jobSelect > 3)) {
+      printf("\nMany kinds of people made the trip to Oregon.\n");
+      printf("You may:\n");
+      printf("1. Be a banker from Boston\n");
+      printf("2. Be a carpenter from Ohio\n");
+      printf("3. Be a farmer from Illinois\n");
+      printf("4. Find out the differences between these choices\n");
       printf("What is your choice? ");
       scanf("%d", &jobSelect);
+      if (jobSelect == 4) {
+        printf("\nTravelling to Oregon Isn't easy! But if you're a banker,\n");
+        printf("you'll have more money for supplies and services than a\n");
+        printf("carpenter or a farmer.\n");
+        printf("\n");
+        printf("However, the harder you have to try, the more points you\n");
+        printf("deserve! Therefore, the farmer earns the greatest number\n");
+        printf("of points and the banker earns the least.\n");
+        jobSelect=0;
+      }
+    }
+    game.job = jobSelect;
   }
   else {
     printf("\nBlahBlahBlah");
-    
+  }
 }
