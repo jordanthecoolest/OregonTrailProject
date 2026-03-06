@@ -43,7 +43,6 @@ int main() {
     printf("What is your choice? ");
     scanf("%d", &mainMenu);
   }
-  jobSelect:
   if (mainMenu == 1) {
     while ((jobSelect < 1) || (jobSelect > 3)) {
       printf("\nMany kinds of people made the trip to Oregon.\n");
@@ -66,6 +65,9 @@ int main() {
       }
     }
     game.job = jobSelect;
+    if (game.job == 1) game.money = 1600;
+    else if (game.job == 2) game.money = 800;
+    else if (game.job == 3) game.money = 400;
   }
   else {
     printf("\nBlahBlahBlah");
