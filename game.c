@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 //initializing stat variables
 struct person {
   char name[20];
@@ -34,6 +36,40 @@ struct gameState {
 #define MAGENTA "\x1b[35m"
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
+void hunt(struct gameState *game) {
+  if (game->ammo < 1) {
+    printf(RED "You don't have any ammunition!\n" RESET);
+    return;
+  }
+  printf("\n" YELLOW "Searching for game..." RESET "\n");
+  //randomized delay
+  int delay = (rand() % 3000000) + 1000000;
+  usleep(delay);
+  char *targetWord = "BANG";
+  time_t start, end;
+  //start reflex test
+  printf(CYAN "!!! NOW !!!" RESET);
+  time(&start);
+  char input[20];
+  scanf("%s", input);
+  time(&end);
+  double elapsed = difftime(end, start);
+  game->ammo -= 1;
+  //logic based on reflex speed
+  if (strcmp(input, targetWord) == 0) {
+    if (elapsed < 1.0) {
+      printf(GREEN "Incredible reflexes! You got 100 lbs of food.\n" RESET);
+      game->food += 100;
+    }
+    else {
+      printf(YELLOW "You got it, but you were slow. You got 20 lbs of food.\n" RESET);
+      game->food += 20;
+    }
+  }
+  else {
+    printf(RED "You missed! The animal escaped.\n" RESET);
+  }
+}
 int main() {
   struct gameState game = {0};
   int mainMenu=0;
