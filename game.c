@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 //initializing stat variables
 struct person {
   char name[20];
@@ -33,7 +35,7 @@ struct gameState {
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 int main() {
-  struct gameState game;
+  struct gameState game = {0};
   int mainMenu=0;
   int jobSelect=0;
   printf(GREEN"~~~~~~~~~~The Oregon Trail~~~~~~~~~~\n"RESET);
@@ -68,6 +70,21 @@ int main() {
     if (game.job == 1) game.money = 1600;
     else if (game.job == 2) game.money = 800;
     else if (game.job == 3) game.money = 400;
+    printf("What is the first name of your wagon leader?: ");
+    scanf("%s", game.party[0].name);
+    game.party[0].health = 100;
+    game.party[0].isAlive = 1;
+    printf("\nWho are the other members of your party?:");
+    for (int i = 1; i < 4; i++) {
+        printf("\nName of member %d: ", i + 1);
+        scanf("%s", game.party[i].name);
+        game.party[i].health = 100;
+        game.party[i].isAlive = 1;
+    }
+    printf("\n\nIt is 1848. Your jumping off place for Oregon is Independence,\n");
+    printf("Missouri. You must decide which month to leave Independence.\n\n");
+    printf("1. March\n2. April\n3. May\n4. June\n5. July\n6. Ask for advice");
+    
   }
   else {
     printf("\nBlahBlahBlah");
