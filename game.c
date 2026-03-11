@@ -41,14 +41,25 @@ void hunt(struct gameState *game) {
     printf(RED "You don't have any ammunition!\n" RESET);
     return;
   }
+  //game instructions
+  printf("\n" GREEN "~~~ HUNTING INSTRUCTIONS ~~~" RESET "\n");
+  printf("1. An animal will appear\n");
+  printf("2. Wait for the " CYAN "!!! NOW !!!" RESET " prompt.\n");
+  printf("3. Type the keyword " RED "BANG" RESET " exactly as shown.\n");
+  printf("4. Speed is key!: < 2.5 seconds rewards max meat!\n");
+  printf(GREEN "\nPress enter when you are ready to start hunting..." RESET);
+  //buffer clear and wait for enter
+  while(getchar() != '\n');
+  getchar();
+  //game start
   printf("\n" YELLOW "Searching for game..." RESET "\n");
   //randomized delay
-  int delay = (rand() % 3000000) + 1000000;
+  int delay = (rand() % 4000000) + 1000000;
   usleep(delay);
   char *targetWord = "BANG";
   time_t start, end;
   //start reflex test
-  printf(CYAN "!!! NOW !!!" RESET);
+  printf(CYAN "!!! NOW !!!" RESET "\n");
   time(&start);
   char input[20];
   scanf("%s", input);
@@ -57,7 +68,7 @@ void hunt(struct gameState *game) {
   game->ammo -= 1;
   //logic based on reflex speed
   if (strcmp(input, targetWord) == 0) {
-    if (elapsed < 1.0) {
+    if (elapsed < 2.5) {
       printf(GREEN "Incredible reflexes! You got 100 lbs of food.\n" RESET);
       game->food += 100;
     }
