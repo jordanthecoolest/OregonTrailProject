@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 //initializing stat variables
 struct person {
   char name[20];
@@ -34,6 +36,51 @@ struct gameState {
 #define MAGENTA "\x1b[35m"
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
+void hunt(struct gameState *game) {
+  if (game->ammo < 1) {
+    printf(RED "You don't have any ammunition!\n" RESET);
+    return;
+  }
+  //game instructions
+  printf("\n" GREEN "~~~ HUNTING INSTRUCTIONS ~~~" RESET "\n");
+  printf("1. An animal will appear\n");
+  printf("2. Wait for the " CYAN "!!! NOW !!!" RESET " prompt.\n");
+  printf("3. Type the keyword " RED "BANG" RESET " exactly as shown.\n");
+  printf("4. Speed is key!: < 2.5 seconds rewards max meat!\n");
+  printf(GREEN "\nPress enter when you are ready to start hunting..." RESET);
+  //buffer clear and wait for enter
+  while(getchar() != '\n');
+  getchar();
+  //game start
+  printf("\n" YELLOW "Searching for game..." RESET "\n");
+  //randomized delay
+  int delay = (rand() % 4000000) + 1000000;
+  usleep(delay);
+  char *targetWord = "BANG";
+  time_t start, end;
+  //start reflex test
+  printf(CYAN "!!! NOW !!!" RESET "\n");
+  time(&start);
+  char input[20];
+  scanf("%s", input);
+  time(&end);
+  double elapsed = difftime(end, start);
+  game->ammo -= 1;
+  //logic based on reflex speed
+  if (strcmp(input, targetWord) == 0) {
+    if (elapsed < 2.5) {
+      printf(GREEN "Incredible reflexes! You got 100 lbs of food.\n" RESET);
+      game->food += 100;
+    }
+    else {
+      printf(YELLOW "You got it, but you were slow. You got 20 lbs of food.\n" RESET);
+      game->food += 20;
+    }
+  }
+  else {
+    printf(RED "You missed! The animal escaped.\n" RESET);
+  }
+}
 int main() {
   struct gameState game = {0};
   int mainMenu=0;
