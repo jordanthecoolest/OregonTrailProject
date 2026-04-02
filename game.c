@@ -119,6 +119,35 @@ void cross_river(struct gameState *game) {
         }
     }
 }
+void random_event(struct gameState *game) {
+  int chance = ramd() % 100;
+  if (chance < 75) {
+    return;
+  }
+  if (chance >= 75 && chance < 85) {
+    printf(YELLOW "\nYou found an abandoned wagon! You scavenged 20 lbs of food." RESET);
+    game->food += 20;
+  }
+  else if (chance >= 80 && chance < 85) {
+    printf(RED "\nRough terrain! One of your wheels broke." RESET "\n");
+    game->wheels--;
+    if (game->wheels < 0) game->wheels = 0;
+  }
+  else if (chance >= 85 && chance < 90) {
+    int victim = rand() % 5;
+    if (game->party[victim].isAlive) {
+      printf(RED "\n%s has contracted dysentary." RESET "\n", game->party[victim].name);
+      game->party[victim].health -= 20;
+    }
+  }
+  else if (chance >= 90 && chance < 95) {
+    printf(GREEN "\nHeavy rain! The grass is lush; your oxen are rested (+5 miles)." RESET "\n");
+    game->milesTraveled += 5;
+  }
+  else {
+    printf(MAGENTA "\nA traveling trader approaches." RESET "\n");
+    //ADD TRADING LOGIC HERE LATER!!!!!
+  }
 int main() {
   struct gameState game = {0};
   int mainMenu=0;
