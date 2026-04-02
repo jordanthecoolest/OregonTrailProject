@@ -120,7 +120,7 @@ void cross_river(struct gameState *game) {
     }
 }
 void random_event(struct gameState *game) {
-  int chance = ramd() % 100;
+  int chance = rand() % 100;
   if (chance < 75) {
     return;
   }
@@ -148,6 +148,39 @@ void random_event(struct gameState *game) {
     printf(MAGENTA "\nA traveling trader approaches." RESET "\n");
     //ADD TRADING LOGIC HERE LATER!!!!!
   }
+void score_calculation(struct gameState *game) {
+  int score = 0;
+  int i = 0;
+  //score calculation for alive party members
+  for (i; i<=4; i++) {
+    if (game->party[i].isAlive == 1) {
+      if (game->party[i].health <= 25) {
+        int score += 200;
+      }
+      else if (game->party [i].health <= 50) {
+        int score += 300;
+      }
+      else if (game->party [i].health <= 75) {
+        int score += 400;
+      }
+      else {
+        int score += 500;
+      }
+    }
+    else return;
+  }
+  //score calculation for remaining resources
+  int score += (game->food)/25;
+  int score += (game->oxen)*4;
+  int score += (game->money)/5;
+  int score += (game->ammo);
+  int score += (game->wheels);
+  int score += (game->axles);
+  int score += (game->tongues);
+  //score multiplier for specific jobs
+  if (game->job == 2) score = score*2;
+  if (game->job == 3) score = score*3;
+}
 int main() {
   struct gameState game = {0};
   int mainMenu=0;
@@ -213,7 +246,7 @@ int main() {
       }
     }
     game.month = monthChoice + 2;
-    game.day = 1
+    game.day = 1;
   }
   else {
     printf("\nBlahBlahBlah");
