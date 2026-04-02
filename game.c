@@ -81,6 +81,44 @@ void hunt(struct gameState *game) {
     printf(RED "You missed! The animal escaped.\n" RESET);
   }
 }
+void cross_river(struct gameState *game) {
+    //generating river conditions
+    int depth = (rand() % 5) + 2;
+    int choice = 0;
+
+    printf("\n" BLUE "~~~ RIVER CROSSING ~~~" RESET "\n");
+    printf("The river is %d feet deep.\n", depth);
+    printf("1. Ford the river (drive across)\n");
+    printf("2. Caulk the wagon and float\n");
+    printf("3. Pay $5 for the ferry\n");
+    printf("What is your choice? ");
+    scanf("%d", &choice);
+    int chance = rand() % 10;
+    //fording the river
+    if (choice == 1) {
+        if (depth > 3) {
+            if (chance < 7) sink_wagon(game); 
+            else printf(GREEN "You barely made it across!\n" RESET);
+        } else {
+            printf(GREEN "You crossed safely.\n" RESET);
+        }
+    } 
+    //caulking across the river
+    else if (choice == 2) {
+        if (chance < 2) sink_wagon(game);
+        else printf(GREEN "The wagon floated across successfully!\n" RESET);
+    }
+    //ferry across the river
+    else if (choice == 3) {
+        if (game->money >= 5) {
+            game->money -= 5;
+            printf(GREEN "The ferryman takes you across safely.\n" RESET);
+        } else {
+            printf(RED "You don't have enough money for the ferry!\n" RESET);
+            cross_river(game);
+        }
+    }
+}
 int main() {
   struct gameState game = {0};
   int mainMenu=0;
