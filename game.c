@@ -1,9 +1,27 @@
 #include "oregon_trail.h"
-
+int errorCheck(int min, int max) {
+  int input;
+  int isValid = 0;
+  char temp;
+  while (isValid == 0) {
+    printf("Choice: ");
+    if (scanf("%d", &input) != 1) {
+      while ((temp = getchar()) != '\n');
+      printf(RED "Please enter a numeric value.\n" RESET);
+    }
+    else if (input < min || input > max) {
+      printf(RED "Your choice must be between %d and %d.\n" RESET, min, max);
+    }
+    else {
+      isValid = 1;
+    }
+  }
+  return input;
+}
 void displayLogo() {
   FILE *fptr = fopen("logo.txt", "r");
   char line[256];
-  if (fprt == NULL) {
+  if (fptr == NULL) {
     printf(RED "Error: logo.txt not found!" RESET "\n");
     return;
   }
@@ -172,12 +190,7 @@ int checkStops(struct gameState *game, int oldMiles, int newMiles) {
             printf(YELLOW "\nYou passed a landmark at mile %d.\n" RESET, i);
             printf("1. Stop here\n");
             printf("2. Pass through\n");
-            printf("Choice: ");
-            scanf("%d", &choice);
-            while (choice < 1 || choice > 2) {
-                printf("Enter 1 or 2: ");
-                scanf("%d", &choice);
-            }
+            choice = errorCheck(1, 2);
             if (choice == 1) {
                 game->milesTraveled = i;
                 if (landmarkMenu(game) == 1) {
@@ -210,27 +223,18 @@ void travelLoop(struct gameState *game) {
         printf("1. Steady\n");
         printf("2. Strenuous\n");
         printf("3. Grueling\n");
-        printf("Choice: ");
-        scanf("%d", &paceChoice);
-        while (paceChoice < 1 || paceChoice > 3) {
-            printf("Enter 1, 2, or 3: ");
-            scanf("%d", &paceChoice);
-        }
+        paceChoice = errorCheck(1, 3);
         printf("\nChoose rations:\n");
         printf("1. Filling\n");
         printf("2. Meager\n");
         printf("3. Bare bones\n");
         printf("Choice: ");
         scanf("%d", &rationChoice);
-        while (rationChoice < 1 || rationChoice > 3) {
-            printf("Enter 1, 2, or 3: ");
-            scanf("%d", &rationChoice);
-        }
+        rationChoice = errorCheck(1, 3);
         printf("\nDaily Action:\n");
         printf("1. Continue Traveling\n");
         printf("2. Stop to hunt (Costs 1 day, uses 1 box of ammo)\n");
-        printf("Choice: ");
-        scanf("%d", &actionChoice);
+        actionChoice = errorCheck(1, 2);
         if (actionChoice == 2) {
             hunt(game);
         }
@@ -313,14 +317,13 @@ void shop(struct gameState *game) {
         printf("5. Medicine ($5/set)\n");
         printf("6. Spare Parts ($50/set)\n");
         printf("0. Exit shop\n");
-        printf("Choice: ");
-        scanf("%d", &choice);
+        choice = errorCheck(0, 6);
         if (choice == 0) {
             running = 0;
         }
         else if (choice >= 1 && choice <= 6) {
-            printf("How many %s? ", items[choice-1]);
-            scanf("%d", &qty);
+            printf("How many %s?\n", items[choice-1]);
+            qty = errorCheck(1, 999);
             if (qty > 0) {
                 float cost = qty * prices[choice-1];
                 if (cost <= game->money) {
@@ -406,8 +409,7 @@ void cross_river(struct gameState *game) {
     printf("1. Ford the river (drive across)\n");
     printf("2. Caulk the wagon and float\n");
     printf("3. Pay $5 for the ferry\n");
-    printf("What is your choice? ");
-    scanf("%d", &choice);
+    choice = errorCheck(1, 3);
     int chance = rand() % 10;
     //fording the river
     if (choice == 1) {
@@ -449,12 +451,10 @@ int main() {
   int gameRunning = 1;
   while (gameRunning) {
     displayLogo();
-    printf("1. Travel the trail\n");
+    printf("\n\n1. Travel the trail\n");
     printf("2. Learn about the trail\n");
-    while ((mainMenu != 1) && (mainMenu != 2)) {
-      printf("What is your choice? ");
-      scanf("%d", &mainMenu);
-    }
+    printf("3. Quit\n");
+    mainMenu = errorCheck(1, 3);
     if (mainMenu == 1) {
       while ((jobSelect < 1) || (jobSelect > 3)) {
         printf("\nMany kinds of people made the trip to Oregon.\n");
@@ -463,8 +463,7 @@ int main() {
         printf("2. Be a carpenter from Ohio\n");
         printf("3. Be a farmer from Illinois\n");
         printf("4. Find out the differences between these choices\n");
-        printf("What is your choice? ");
-        scanf("%d", &jobSelect);
+        jobSelect = errorCheck(1, 4);
         if (jobSelect == 4) {
           printf("\nTravelling to Oregon Isn't easy! But if you're a banker,\n");
           printf("you'll have more money for supplies and services than a\n");
@@ -476,64 +475,60 @@ int main() {
           jobSelect=0;
         }
       }
-    game.job = jobSelect;
-    if (game.job == 1) game.money = 1600;
-    else if (game.job == 2) game.money = 800;
-    else if (game.job == 3) game.money = 400;
-    //prompting user for character names
-    printf("What is the first name of your wagon leader?: ");
-    scanf("%s", game.party[0].name);
-    game.party[0].health = 100;
-    game.party[0].isAlive = 1;
-    printf("\nWho are the other members of your party?:");
-    for (int i = 1; i < 5; i++) {
-        printf("\nName of member %d: ", i + 1);
-        scanf("%s", game.party[i].name);
-        game.party[i].health = 100;
-        game.party[i].isAlive = 1;
-    }
-    //prompting user for departure month
-    printf("\n\nIt is 1848. Your jumping off place for Oregon is Independence,\n");
-    printf("Missouri. You must decide which month to leave Independence.\n\n");
-    printf("1. March\n2. April\n3. May\n4. June\n5. July\n6. Ask for advice");
-    int monthChoice = 0;
-    while (monthChoice < 1 || monthChoice > 5) {
-      printf("\nWhat is your choice?: ");
-      scanf("%d", &monthChoice);
-      if (monthChoice == 6) {
-        printf("\nIf you leave too early, there won't be any grass for your oxen");
-        printf("\nto eat. If you leave too late, you may not get to Oregon before");
-        printf("\nwinter comes. If you leave at just the right time, there will be");
-        printf("\ngreen grass and the weather will still be cool.");
-        monthChoice = 0;
+      game.job = jobSelect;
+      if (game.job == 1) game.money = 1600;
+      else if (game.job == 2) game.money = 800;
+      else if (game.job == 3) game.money = 400;
+      //prompting user for character names
+      printf("What is the first name of your wagon leader?: ");
+      scanf("%s", game.party[0].name);
+      game.party[0].health = 100;
+      game.party[0].isAlive = 1;
+      printf("\nWho are the other members of your party?");
+      for (int i = 1; i < 5; i++) {
+          printf("\nName of member %d: ", i + 1);
+          scanf("%s", game.party[i].name);
+          game.party[i].health = 100;
+          game.party[i].isAlive = 1;
       }
+      //prompting user for departure month
+      printf("\n\nIt is 1848. Your jumping off place for Oregon is Independence,\n");
+      printf("Missouri. You must decide which month to leave Independence.\n\n");
+      printf("1. March\n2. April\n3. May\n4. June\n5. July\n6. Ask for advice");
+      int monthChoice = 0;
+      while (monthChoice < 1 || monthChoice > 5) {
+        monthChoice = errorCheck(1, 6);
+        if (monthChoice == 6) {
+          printf("\nIf you leave too early, there won't be any grass for your oxen");
+          printf("\nto eat. If you leave too late, you may not get to Oregon before");
+          printf("\nwinter comes. If you leave at just the right time, there will be");
+          printf("\ngreen grass and the weather will still be cool.");
+          monthChoice = 0;
+        }
+      }
+      game.month = monthChoice + 2;
+      game.day = 1;
+      shop(&game);
+      travelLoop(&game);
     }
-    game.month = monthChoice + 2;
-    game.day = 1;
-    shop(&game);
-    travelLoop(&game);
+    else if (mainMenu == 2) {
+      printf("\n" CYAN "--- ABOUT THE OREGON TRAIL ---" RESET "\n");
+      printf("Your journey begins in Independence, Missouri, and ends 2,170 miles\n");
+      printf("later in Oregon City. You will face harsh weather, deep rivers,\n");
+      printf("and the constant threat of disease and starvation.\n\n");
+      printf("SUCCESS DEPENDS ON THREE THINGS:\n");
+      printf("1. " YELLOW "Resources:" RESET " Manage your food and oxen wisely.\n");
+      printf("2. " YELLOW "Pace:" RESET " Moving too fast kills your party; moving too slow invites winter.\n");
+      printf("3. " YELLOW "Luck:" RESET " Even the best leaders can be taken down by a broken axle.\n\n");
+      printf("Choose your profession wisely—bankers have it easy, but farmers\n");
+      printf("earn the most glory (and points) at the end of the trail!\n");
+      printf("\nPress Enter to return to the main menu...");
+      while(getchar() != '\n');
+      getchar();
+    }
+    else {
+      gameRunning = 0;
+    }
+  return 0;
   }
-  else if (mainMenu == 2) {
-    printf("\n" CYAN "--- ABOUT THE OREGON TRAIL ---" RESET "\n");
-    printf("Your journey begins in Independence, Missouri, and ends 2,170 miles\n");
-    printf("later in Oregon City. You will face harsh weather, deep rivers,\n");
-    printf("and the constant threat of disease and starvation.\n\n");
-    
-    printf("SUCCESS DEPENDS ON THREE THINGS:\n");
-    printf("1. " YELLOW "Resources:" RESET " Manage your food and oxen wisely.\n");
-    printf("2. " YELLOW "Pace:" RESET " Moving too fast kills your party; moving too slow invites winter.\n");
-    printf("3. " YELLOW "Luck:" RESET " Even the best leaders can be taken down by a broken axle.\n\n");
-    
-    printf("Choose your profession wisely—bankers have it easy, but farmers\n");
-    printf("earn the most glory (and points) at the end of the trail!\n");
-    printf("\nPress Enter to return to the main menu...");
-    
-    while(getchar() != '\n');
-    getchar();
-  }
-  else {
-    gameRunning = 0;
-  }
-return 0;
-}
 }
