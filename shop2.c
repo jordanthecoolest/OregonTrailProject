@@ -1,3 +1,4 @@
+//written by emma
 #include <stdio.h>
 
 void shop(float *money) {
