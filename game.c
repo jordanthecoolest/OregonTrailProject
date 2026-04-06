@@ -1,3 +1,5 @@
+//written by jordan with added functions from emma and garrett
+//testing and bug fixes by jordan
 #include "oregon_trail.h"
 int errorCheck(int min, int max) {
   int input;
