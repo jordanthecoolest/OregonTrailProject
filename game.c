@@ -448,10 +448,10 @@ void sink_wagon(struct gameState *game) {
 }
 int main() {
   struct gameState game = {0};
-  int mainMenu=0;
+  int mainMenu;
   int jobSelect=0;
   int gameRunning = 1;
-  while (gameRunning) {
+  while (gameRunning == 1) {
     displayLogo();
     printf("\n\n1. Travel the trail\n");
     printf("2. Learn about the trail\n");
@@ -529,6 +529,7 @@ int main() {
       getchar();
     }
     else {
+      printf("Happy Trails!\n");
       gameRunning = 0;
     }
   return 0;
