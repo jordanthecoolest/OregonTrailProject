@@ -1,50 +1,13 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-//initializing stat variables
-struct person {
-  char name[20];
-  int health;
-  int isAlive;
-};
-struct gameState {
-  //party
-  struct person party[5];
-  int job;
-  //resources
-  int food;
-  int oxen;
-  float money;
-  int ammo;
-  int medicine;
-  //spare parts
-  int wheels;
-  int axles;
-  int tongues;
-  int parts;
-  //progress
-  int milesTraveled;
-  int day;
-  int month;
-};
-//defining colors to keep code clean
-#define RED     "\x1b[31m"
-#define GREEN   "\x1b[32m"
-#define YELLOW  "\x1b[33m"
-#define BLUE    "\x1b[34m"
-#define MAGENTA "\x1b[35m"
-#define CYAN    "\x1b[36m"
-#define RESET   "\x1b[0m"
+#include "oregon_trail.h"
+
 void saveScore(struct gameState *game, int finalScore) {
   FILE *fptr = fopen("highscores.txt", "a");
   if (fptr == NULL) {
     printf("Error: Could not save high score.\n");
     return;
   }
-  fprintf(fprt, "Name %s | Score: %d\n", game->party[0].name, finalScore);
-  fclose(fprt);
+  fprintf(fptr, "Name %s | Score: %d\n", game->party[0].name, finalScore);
+  fclose(fptr);
   printf(CYAN "Your score has been saved to highscores.txt!" RESET "\n");
 }
 void winScreen(struct gameState *game){
@@ -344,7 +307,7 @@ void shop(struct gameState *game) {
                       case 6: game->parts += qty; break;
                     }
                     printf("Bought %d %s of %s. Remaining: $%.2f\n", 
-                           qty, units[choice-1], items[choice-1], *money);
+                           qty, units[choice-1], items[choice-1], game->money);
                     if (choice == 3 && inv[2] < 3)
                         printf("Tip: It's recommended to have at least 3 yokes of oxen\n");
                 } else {
@@ -360,12 +323,6 @@ void shop(struct gameState *game) {
     printf("\n--- Final Inventory ---\n");
     for (int i = 0; i < 6; i++)
         printf("%s: %d %s\n", items[i], inv[i], units[i]);
-}
-int main() {
-    printf("Starting money: $%.2f\n", game.money);
-    shop(&money);
-    printf("\nExited shop with $%.2f\n", game.money);
-    return 0;
 }
 void hunt(struct gameState *game) {
   if (game->ammo < 1) {
@@ -450,38 +407,48 @@ void cross_river(struct gameState *game) {
         }
     }
 }
+void sink_wagon(struct gameState *game) {
+  printf(RED "\nYour wagon swamped while crossing! You lost supplies\n" RESET);
+  game->food -= (rand() % 50 + 10;
+  if (game->food < 0) game->food = 0;
+  game->oxen -=1;
+  if (game->oxen < 0) game->oxen = 0;
+  changePartyHealth(game, -20);
+}
 int main() {
   struct gameState game = {0};
   int mainMenu=0;
   int jobSelect=0;
-  printf(GREEN"~~~~~~~~~~The Oregon Trail~~~~~~~~~~\n"RESET);
-  printf("1. Travel the trail\n");
-  printf("2. Learn about the trail\n");
-  while ((mainMenu != 1) && (mainMenu != 2)) {
-    printf("What is your choice? ");
-    scanf("%d", &mainMenu);
-  }
-  if (mainMenu == 1) {
-    while ((jobSelect < 1) || (jobSelect > 3)) {
-      printf("\nMany kinds of people made the trip to Oregon.\n");
-      printf("You may:\n");
-      printf("1. Be a banker from Boston\n");
-      printf("2. Be a carpenter from Ohio\n");
-      printf("3. Be a farmer from Illinois\n");
-      printf("4. Find out the differences between these choices\n");
+  int gameRunning = 1;
+  while (gameRunning) {
+    printf(GREEN"~~~~~~~~~~The Oregon Trail~~~~~~~~~~\n"RESET);
+    printf("1. Travel the trail\n");
+    printf("2. Learn about the trail\n");
+    while ((mainMenu != 1) && (mainMenu != 2)) {
       printf("What is your choice? ");
-      scanf("%d", &jobSelect);
-      if (jobSelect == 4) {
-        printf("\nTravelling to Oregon Isn't easy! But if you're a banker,\n");
-        printf("you'll have more money for supplies and services than a\n");
-        printf("carpenter or a farmer.\n");
-        printf("\n");
-        printf("However, the harder you have to try, the more points you\n");
-        printf("deserve! Therefore, the farmer earns the greatest number\n");
-        printf("of points and the banker earns the least.\n");
-        jobSelect=0;
-      }
+      scanf("%d", &mainMenu);
     }
+    if (mainMenu == 1) {
+      while ((jobSelect < 1) || (jobSelect > 3)) {
+        printf("\nMany kinds of people made the trip to Oregon.\n");
+        printf("You may:\n");
+        printf("1. Be a banker from Boston\n");
+        printf("2. Be a carpenter from Ohio\n");
+        printf("3. Be a farmer from Illinois\n");
+        printf("4. Find out the differences between these choices\n");
+        printf("What is your choice? ");
+        scanf("%d", &jobSelect);
+        if (jobSelect == 4) {
+          printf("\nTravelling to Oregon Isn't easy! But if you're a banker,\n");
+          printf("you'll have more money for supplies and services than a\n");
+          printf("carpenter or a farmer.\n");
+          printf("\n");
+          printf("However, the harder you have to try, the more points you\n");
+          printf("deserve! Therefore, the farmer earns the greatest number\n");
+          printf("of points and the banker earns the least.\n");
+          jobSelect=0;
+        }
+      }
     game.job = jobSelect;
     if (game.job == 1) game.money = 1600;
     else if (game.job == 2) game.money = 800;
@@ -515,10 +482,30 @@ int main() {
       }
     }
     game.month = monthChoice + 2;
-    game.day = 1
+    game.day = 1;
     shop(&game);
+    travelLoop(&game);
+  }
+  else if (mainMenu == 2) {
+    printf("\n" CYAN "--- ABOUT THE OREGON TRAIL ---" RESET "\n");
+    printf("Your journey begins in Independence, Missouri, and ends 2,170 miles\n");
+    printf("later in Oregon City. You will face harsh weather, deep rivers,\n");
+    printf("and the constant threat of disease and starvation.\n\n");
+    
+    printf("SUCCESS DEPENDS ON THREE THINGS:\n");
+    printf("1. " YELLOW "Resources:" RESET " Manage your food and oxen wisely.\n");
+    printf("2. " YELLOW "Pace:" RESET " Moving too fast kills your party; moving too slow invites winter.\n");
+    printf("3. " YELLOW "Luck:" RESET " Even the best leaders can be taken down by a broken axle.\n\n");
+    
+    printf("Choose your profession wisely—bankers have it easy, but farmers\n");
+    printf("earn the most glory (and points) at the end of the trail!\n");
+    printf("\nPress Enter to return to the main menu...");
+    
+    while(getchar() != '\n');
+    getchar();
   }
   else {
-    printf("\nBlahBlahBlah");
+    gameRunning = 0;
   }
+return 0;
 }
