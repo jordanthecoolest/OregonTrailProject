@@ -1,5 +1,19 @@
 #include "oregon_trail.h"
 
+void displayLogo() {
+  FILE *fptr = fopen("logo.txt", "r");
+  char line[256];
+  if (fprt == NULL) {
+    printf(RED "Error: logo.txt not found!" RESET "\n");
+    return;
+  }
+  printf(GREEN);
+  while (fgets(line, sizeof(line), fptr)) {
+    printf("%s", line);
+  }
+  printf(RESET);
+  fclose(fptr);
+}
 void saveScore(struct gameState *game, int finalScore) {
   FILE *fptr = fopen("highscores.txt", "a");
   if (fptr == NULL) {
@@ -434,7 +448,7 @@ int main() {
   int jobSelect=0;
   int gameRunning = 1;
   while (gameRunning) {
-    printf(GREEN"~~~~~~~~~~The Oregon Trail~~~~~~~~~~\n"RESET);
+    displayLogo();
     printf("1. Travel the trail\n");
     printf("2. Learn about the trail\n");
     while ((mainMenu != 1) && (mainMenu != 2)) {
