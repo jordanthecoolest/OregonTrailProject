@@ -532,6 +532,6 @@ int main() {
       printf("Happy Trails!\n");
       gameRunning = 0;
     }
-  return 0;
   }
+  return 0;
 }
