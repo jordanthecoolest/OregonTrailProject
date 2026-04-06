@@ -70,5 +70,3 @@ int errorCheck(int min, int max);
 void displayLogo();
 void winScreen(struct gameState *game);
 void saveScore(struct gameState *game, int finalScore);
-
-#endif
