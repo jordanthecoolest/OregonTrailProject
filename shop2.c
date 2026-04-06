@@ -11,7 +11,7 @@ void shop(float *money) {
     
     do {
         printf("\nMoney: $%.2f\n", *money);
-        printf("1. Food (20¢/lb)\n");
+        printf("1. Food (20Â¢/lb)\n");
         printf("2. Clothing ($10/set)\n");
         printf("3. Oxen ($40/yoke)\n");
         printf("4. Ammunition ($2/box)\n");
@@ -55,11 +55,9 @@ void shop(float *money) {
 }
 
 int main() {
-    float money = 400.00;
-    
-    printf("Starting money: $%.2f\n", money);
+    printf("Starting money: $%.2f\n", game.money);
     shop(&money);
-    printf("\nExited shop with $%.2f\n", money);
+    printf("\nExited shop with $%.2f\n", game.money);
     
     return 0;
 }
