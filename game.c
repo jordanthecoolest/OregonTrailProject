@@ -64,8 +64,8 @@ void changePartyHealth(struct gameState *game, int amount) {
 }
 
 int isFort(int miles) {
-    int forts[16] = {2005, 2015, 2025, 2035, 2045, 2055, 2065, 2075, 2085, 2095, 2105, 2115, 2125, 2135, 2145, 2155};
-    for (int i = 0; i < 16; i++) {
+    int forts[5] = {102, 304, 640, 1032, 1808};
+    for (int i = 0; i < 5; i++) {
         if (miles == forts[i]) {
             return 1;
         }
@@ -176,13 +176,13 @@ int checkStops(struct gameState *game, int oldMiles, int newMiles) {
     return 0;
 }
 void travelLoop(struct gameState *game) {
-    int paceChoice, rationChoice;
+    int paceChoice, rationChoice, actionChoice;
     int foodUsed, milesToday, healthChange;
     int oxenBonus, randomMiles;
     int oldMiles, newMiles;
     int restedToday;
-    if (game->milesTraveled < 2000 || game->milesTraveled > 2170) {
-        game->milesTraveled = 2000 + (rand() % 171);
+    if (game->milesTraveled == 0) {
+      printf(YELLOW "\nYou are departing from Independence, Missouri!\n" RESET);
     }
     while (game->milesTraveled < 2170 && aliveCount(game) > 0) {
         printf("\n" CYAN "===== TRAVEL DAY =====\n" RESET);
@@ -211,6 +211,14 @@ void travelLoop(struct gameState *game) {
         while (rationChoice < 1 || rationChoice > 3) {
             printf("Enter 1, 2, or 3: ");
             scanf("%d", &rationChoice);
+        }
+        printf("\nDaily Action:\n");
+        printf("1. Continue Traveling\n");
+        printf("2. Stop to hunt (Costs 1 day, uses 1 box of ammo)\n");
+        printf("Choice: ");
+        scanf("%d", &actionChoice);
+        if (actionChoice == 2) {
+            hunt(game);
         }
         healthChange = 0;
         if (rationChoice == 1) {
@@ -253,6 +261,11 @@ void travelLoop(struct gameState *game) {
             game->milesTraveled = 2170;
         }
         newMiles = game->milesTraveled;
+        if ((oldMiles <500 && newMiles >= 500) ||
+            (oldMiles <1000 && newMiles >= 1000) ||
+            (oldMiles < 1500 && newMiles >= 1500)) {
+            cross_river(game);
+        }
         changePartyHealth(game, healthChange);
         if ((rand() % 100) < 10) {
             printf(YELLOW "Someone in the party got sick.\n" RESET);
@@ -409,7 +422,7 @@ void cross_river(struct gameState *game) {
 }
 void sink_wagon(struct gameState *game) {
   printf(RED "\nYour wagon swamped while crossing! You lost supplies\n" RESET);
-  game->food -= (rand() % 50 + 10;
+  game->food -= (rand() % 50 + 10);
   if (game->food < 0) game->food = 0;
   game->oxen -=1;
   if (game->oxen < 0) game->oxen = 0;
@@ -508,4 +521,5 @@ int main() {
     gameRunning = 0;
   }
 return 0;
+}
 }
