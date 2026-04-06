@@ -1,4 +1,3 @@
-#ifndef OREGON_TRAIL_H
 #define OREGON_TRAIL_H
 
 #include <stdio.h>
@@ -66,7 +65,9 @@ void cross_river(struct gameState *game);
 void restStop(struct gameState *game);
 void sink_wagon(struct gameState *game);
 
-//end
+//utility & systems
+int errorCheck(int min, int max);
+void displayLogo();
 void winScreen(struct gameState *game);
 void saveScore(struct gameState *game, int finalScore);
 
