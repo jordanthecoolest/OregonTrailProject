@@ -1,3 +1,4 @@
+//written by garrett
 int aliveCount(struct gameState *game) {
     int count = 0;
     for (int i = 0; i < 5; i++) {
