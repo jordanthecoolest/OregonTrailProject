@@ -230,8 +230,6 @@ void travelLoop(struct gameState *game) {
         printf("1. Filling\n");
         printf("2. Meager\n");
         printf("3. Bare bones\n");
-        printf("Choice: ");
-        scanf("%d", &rationChoice);
         rationChoice = errorCheck(1, 3);
         printf("\nDaily Action:\n");
         printf("1. Continue Traveling\n");
@@ -331,12 +329,12 @@ void shop(struct gameState *game) {
                 if (cost <= game->money) {
                     game->money -= cost;
                     switch(choice) {
-                      case 1: game->food += qty; break;
-                      case 2: game->clothing += qty; break;
-                      case 3: game->oxen += (qty * 2); break;
-                      case 4: game->ammo += (qty * 20); break;
-                      case 5: game->medicine += qty; break;
-                      case 6: game->parts += qty; break;
+                      case 1: game->food += qty; inv[0] = qty; break;
+                      case 2: game->clothing += qty; inv[1] = qty; break;
+                      case 3: game->oxen += (qty * 2); inv[2] = qty; break;
+                      case 4: game->ammo += (qty * 20); inv[3] = qty; break;
+                      case 5: game->medicine += qty; inv[4] = qty; break;
+                      case 6: game->parts += qty; inv[5] = qty; break;
                     }
                     printf("Bought %d %s of %s. Remaining: $%.2f\n", 
                            qty, units[choice-1], items[choice-1], game->money);
@@ -499,6 +497,7 @@ int main() {
       printf("1. March\n2. April\n3. May\n4. June\n5. July\n6. Ask for advice");
       int monthChoice = 0;
       while (monthChoice < 1 || monthChoice > 5) {
+        printf("\n");
         monthChoice = errorCheck(1, 6);
         if (monthChoice == 6) {
           printf("\nIf you leave too early, there won't be any grass for your oxen");
